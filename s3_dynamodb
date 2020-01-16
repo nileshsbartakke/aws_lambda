@@ -1,0 +1,50 @@
+import json
+import boto3
+import logging
+from botocore.exceptions import ClientError
+s3 = boto3.client('s3')
+
+dynamodb=boto3.client('dynamodb')
+dynamodb = boto3.resource('dynamodb', region_name='us-west-1', endpoint_url="http://localhost:8000")
+
+
+
+table = dynamodb.Table('test')
+
+def bucket_exists(bucket_name):
+    try:
+        response = s3.head_bucket(Bucket=bucket_name)
+    except ClientError as e:
+        logging.debug(e)
+        return False
+    return True
+
+def mov_bucket(bucket_name):
+    pass
+   
+    
+    
+
+
+
+def lambda_handler(event, context):
+    # TODO implement
+    bucket_name="test5353"
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(levelname)s: %(asctime)s: %(message)s')
+    if bucket_exists(bucket_name):
+        logging.info(f'{bucket_name} exists and you have permission to access it.')
+        print(bucket_name)
+        table.put_item(Item={'buc_name':bucket_name})
+        print("Item Inserted Successfully")
+    else:
+        logging.info(f'{bucket_name} does not exist or 'f'you do not have permission to access it.')
+    
+    
+    
+    
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('done')
+    }
